@@ -60,3 +60,30 @@ ggplot(dataset_cleaned, aes(x = age, fill = gender)) +
 ```{r}
 
 ```
+
+```{r}
+# Load necessary libraries
+library(kableExtra)
+library(knitr)
+library(broom)
+
+# Conduct the logistic regression model
+ref_model <- glm(referendum ~ age + gender, data = referendum_raw, family = binomial)
+
+# Tidy the results
+tidy_results <- tidy(ref_model)
+
+# Print the tidy results
+print(tidy_results)
+
+# Display the results in a clean table
+tidy_results %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+```
+```{r}
+
+
+```
+
