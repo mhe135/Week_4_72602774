@@ -55,13 +55,8 @@ ggplot(dataset_cleaned, aes(x = age, fill = gender)) +
     plot.title = element_text(hjust = 0.5),
     legend.position = "none")
 ```
-
-
 ```{r}
-
-```
-
-```{r}
+# Complete cases
 # Load necessary libraries
 library(kableExtra)
 library(knitr)
@@ -83,6 +78,7 @@ tidy_results %>%
 
 ```
 ```{r}
+# Imputed cases
 # Library necessity package
 library(mice)
 # Run multiple imputation
@@ -94,5 +90,5 @@ with(referendum_imputed, glm(referendum ~ age + gender, family = binomial)) %>%
   pool() %>%
   summary()
 ```
-Conclusion:
+# Conclusion:
 The analysis of the imputed dataset reveals that the proportion of 'yes' voters is approximately 0.61. The logistic regression results indicate that age is a significant predictor, with older individuals being less likely to vote 'yes'. Gender also plays a role, with males being significantly less likely to vote 'yes' compared to females. However, other gender identities did not show statistically significant differences. These insights provide a clearer understanding of voter behavior, highlighting the importance of considering demographic factors in referendum outcomes.
