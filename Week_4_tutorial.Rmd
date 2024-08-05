@@ -83,6 +83,15 @@ tidy_results %>%
 
 ```
 ```{r}
+library(mice)
+# Run multiple imputation
+referendum_imputed <- mice(referendum_raw) # Calculate the proportion of yes voters
+mean(complete(referendum_imputed, "long")$referendum)
+# Fit the logistic regression model on each of the imputed datasets,
+# pool them, and show summary stats
+with(referendum_imputed, glm(referendum ~ age + gender, family = binomial)) %>% 
+  pool() %>%
+  summary()
 
 
 ```
