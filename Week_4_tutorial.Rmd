@@ -1,0 +1,62 @@
+---
+title: "Week_4_tutorial"
+author: "Miaobing"
+date: "2024-08-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Load the necessary library from the Tidyverse
+library(readr)
+
+# Load the data from the CSV file
+referendum_raw <- read_csv("~/Desktop/referendum_survey_lab_version.csv")
+```
+
+```{r}
+# Load necessary packages
+library(dplyr)
+library(tidyr)
+
+# Assuming referendum_raw is the data frame containing the dataset
+missing_values <- referendum_raw %>%
+  summarise(across(everything(), ~ sum(is.na(.)))) %>%
+# Display the table
+print(missing_values)
+
+```
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Load the dataset
+dataset <- referendum_raw
+
+# Step 1: Inspect and clean the data
+# Remove rows with missing age or gender
+dataset_cleaned <- na.omit(dataset[, c("age", "gender")])
+
+# Step 2: Create the visualization
+ggplot(dataset_cleaned, aes(x = age, fill = gender)) +
+  geom_density( mapping = NULL, data = NULL, stat = "density",position = "identity") +
+  facet_wrap(~gender) +
+  theme_minimal() +
+  labs(
+    title = "Age Distribution Across Genders",
+    x = "Age",
+    y = "Count",
+    fill = "Gender"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none")
+```
+
+
+```{r}
+
+```
