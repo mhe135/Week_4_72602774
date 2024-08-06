@@ -9,10 +9,189 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 ```{r}
 # Load the necessary library from the Tidyverse
 library(readr)
-
 # Load the data from the CSV file
 referendum_raw <- read_csv("~/Desktop/referendum_survey_lab_version.csv")
 ```
+```{r}
+# Load necessary packages
+library(dplyr)
+library(tidyr)
+
+# Assuming referendum_raw is the data frame containing the dataset
+missing_values <- referendum_raw %>%
+  summarise(across(everything(), ~ sum(is.na(.))))
+
+# Display the table
+print(missing_values)
+
+```
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Load the dataset
+dataset <- referendum_raw
+
+# Step 1: Inspect and clean the data
+# Remove rows with missing age or gender
+dataset_cleaned <- na.omit(dataset[, c("age", "gender")])
+
+# Step 2: Create the visualization
+ggplot(dataset_cleaned, aes(x = age, fill = gender)) +
+  geom_density( mapping = NULL, data = NULL, stat = "density",position = "identity") +
+  facet_wrap(~gender) +
+  theme_minimal() +
+  labs(
+    title = "Age Distribution Across Genders",
+    x = "Age",
+    y = "Count",
+    fill = "Gender"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none")
+```
+
+### Tables of each logistic regression
+
+#### Multiple Imputation
+
+```{r echo=FALSE, warning=FALSE,include=FALSE}
+# Run multiple imputation
+referendum_imputed <- mice(referendum_raw, m = 5, method = 'pmm', seed = 123)
+
+# Summary of the imputation process
+summary(referendum_imputed)
+
+# Calculate the proportion of 'yes' voters in the imputed datasets
+imputed_data_long <- complete(referendum_imputed, "long")
+
+proportion_yes_imputed <- imputed_data_long %>%
+  summarise(proportion_yes = mean(referendum, na.rm = TRUE))
+
+# Display the proportion
+proportion_yes_imputed
+
+
+# Convert gender to factor
+referendum_raw$gender <- as.factor(referendum_raw$gender)
+
+# Complete Case Analysis ---------------------------------------------------
+# Filter complete cases
+complete_cases <- referendum_raw %>% filter(!is.na(age), !is.na(gender), !is.na(referendum))
+
+# Logistic regression for complete cases
+model_complete <- glm(referendum ~ age + gender, data = complete_cases, family = binomial)
+
+# Tidy results for complete cases and extract confidence intervals
+tidy_complete <- tidy(model_complete, conf.int = TRUE)
+
+# Multiple Imputation Analysis ---------------------------------------------
+# Perform multiple imputation
+imputed_data <- mice(referendum_raw, m = 5, method = "pmm", seed = 123)
+
+# Fit logistic regression models on each imputed dataset
+fit <- with(imputed_data, glm(referendum ~ age + gender, family = binomial))
+
+# Pool results and tidy
+pooled_results <- pool(fit)
+tidy_pooled <- tidy(pooled_results, conf.int = TRUE)
+```
+
+```{r echo=FALSE, include=FALSE, warning=FALSE}
+
+# Filter complete cases
+complete_cases <- referendum_raw %>%
+  filter(!is.na(referendum), !is.na(gender), !is.na(age))
+
+# Calculate overall proportion of 'Yes' votes
+overall_proportion_complete <- complete_cases %>%
+  summarise(YesProportion = round(mean(referendum == 1),1)) %>%
+  pull(YesProportion)
+
+# Display the result
+overall_proportion_complete
+```
+
+### Logistic Regression and Pooling Results
+```{r echo=FALSE}
+# Fit logistic regression model on each imputed dataset
+imputed_models <- with(referendum_imputed, glm(referendum ~ age + gender, family = binomial))
+
+# Pool the results
+pooled_results <- pool(imputed_models)
+
+# Summarize the pooled results
+summary_pooled <- summary(pooled_results)
+# Display the pooled results in a clean table
+summary_pooled %>%
+  kable("html", caption = "Pooled Logistic Regression Results") %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+```
+
+```{r}
+# Complete cases
+# Load necessary libraries
+library(kableExtra)
+library(knitr)
+library(broom)
+
+# Conduct the logistic regression model
+ref_model <- glm(referendum ~ age + gender, data = referendum_raw, family = binomial)
+
+# Tidy the results
+tidy_results <- tidy(ref_model)
+
+# Print the tidy results
+print(tidy_results)
+
+# Display the results in a clean table
+tidy_results %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+```
+The percentage of votes in favour of completion of cases is around **0.6**. This indicates that **60%** of respondents cast "yes" ballots in the referendum. This percentage gives an idea of the general level of support for the referendum.
+
+```{r echo=FALSE, include=FALSE, warning=FALSE}
+
+# Perform multiple imputation
+imputed_data <- mice(referendum_raw, m = 5, method = 'pmm', maxit = 50, seed = 500)
+
+# Pool the results for proportion calculation
+imputed_proportion <- with(imputed_data, mean(referendum == 1, na.rm = TRUE))
+
+# Extract the pooled estimate
+summary_pooled_proportion <- summary(imputed_proportion)
+pooled_estimate <- summary_pooled_proportion$estimate[1]
+
+# Display the result
+head(pooled_estimate)
+
+```
+
+```{r echo=FALSE, warning=FALSE}
+# Logistic regression on complete cases
+logistic_model_complete <- glm(referendum ~ age + gender, data = complete_cases, family = binomial)
+
+# Display the summary
+summary(logistic_model_complete)
+
+# Logistic regression on imputed data
+imputed_models <- with(imputed_data, glm(referendum ~ age + gender, family = binomial))
+pooled_models <- pool(imputed_models)
+
+# Display the summary
+summary(pooled_models)
+
+
+```
+
+# Conclusion:
+The analysis of the imputed dataset reveals that the proportion of 'yes' voters is approximately 0.61. The logistic regression results indicate that age is a significant predictor, with older individuals being less likely to vote 'yes'. Gender also plays a role, with males being significantly less likely to vote 'yes' compared to females. However, other gender identities did not show statistically significant differences. These insights provide a clearer understanding of voter behavior, highlighting the importance of considering demographic factors in referendum outcomes.
