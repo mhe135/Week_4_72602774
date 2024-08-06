@@ -1,0 +1,18 @@
+---
+title: "Proportion_analysis"
+author: "Miaobing"
+date: "2024-08-06"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Load the necessary library from the Tidyverse
+library(readr)
+
+# Load the data from the CSV file
+referendum_raw <- read_csv("~/Desktop/referendum_survey_lab_version.csv")
+```
