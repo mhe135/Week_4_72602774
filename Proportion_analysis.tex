@@ -37,46 +37,6 @@
 \makeatother
 \usepackage{xcolor}
 \usepackage[margin=1in]{geometry}
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -94,6 +54,20 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
@@ -113,24 +87,78 @@
 \begin{document}
 \maketitle
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# Load the necessary library from the Tidyverse}
-\FunctionTok{library}\NormalTok{(readr)}
-\CommentTok{\# Load the data from the CSV file}
-\NormalTok{referendum\_raw }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"\textasciitilde{}/Desktop/referendum\_survey\_lab\_version.csv"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{verbatim}
+## # A tibble: 1 x 3
+##     age gender referendum
+##   <int>  <int>      <int>
+## 1    12     18         85
+\end{verbatim}
+
+\includegraphics{Proportion_analysis_files/figure-latex/unnamed-chunk-4-1.pdf}
+\# Complete cases \#\#\# 1. The proportion for vote `yes' in the
+referendum
 
 \begin{verbatim}
-## Rows: 1063 Columns: 3
-## -- Column specification --------------------------------------------------------
-## Delimiter: ","
-## chr (1): gender
-## dbl (2): age, referendum
-## 
-## i Use `spec()` to retrieve the full column specification for this data.
-## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## [1] 0.6
 \end{verbatim}
+
+\subsubsection{2. Logistic regression table for Complete
+cases}\label{logistic-regression-table-for-complete-cases}
+
+\begin{longtable}[t]{lrrrr}
+\caption{\label{tab:unnamed-chunk-6}Logistic Regression on Complete Cases}\\
+\toprule
+term & estimate & std.error & statistic & p.value\\
+\midrule
+(Intercept) & 1.9911196 & 0.2418370 & 8.2333136 & 0.0000000\\
+age & -0.0291008 & 0.0045787 & -6.3557526 & 0.0000000\\
+genderGenderqueer, neither exclusively male nor female & 1.3495750 & 1.0764310 & 1.2537496 & 0.2099330\\
+genderMale & -0.4127509 & 0.1377062 & -2.9973304 & 0.0027236\\
+genderOther (Please State) & 0.2548679 & 1.2291860 & 0.2073469 & 0.8357389\\
+\addlinespace
+genderTransgender Female (Male to Female: MTF) & 13.3899203 & 608.7668192 & 0.0219952 & 0.9824518\\
+genderTransgender Male (Female to Male; FTM) & 13.1592764 & 621.6285024 & 0.0211690 & 0.9831108\\
+\bottomrule
+\end{longtable}
+
+\section{Imputed cases}\label{imputed-cases}
+
+\subsubsection{1. The proportion of yes
+voters}\label{the-proportion-of-yes-voters}
+
+\begin{verbatim}
+## [1] 0.6
+\end{verbatim}
+
+\subsubsection{2. Logistic Regression Table for multiple
+imputation}\label{logistic-regression-table-for-multiple-imputation}
+
+\begin{longtable}[t]{lrrrrr}
+\caption{\label{tab:unnamed-chunk-9}Logistic Regression on Imputed Data}\\
+\toprule
+term & estimate & std.error & statistic & df & p.value\\
+\midrule
+(Intercept) & 1.9907956 & 0.2615553 & 7.6113766 & 59.81544 & 0.0000000\\
+age & -0.0293965 & 0.0048799 & -6.0239461 & 82.77097 & 0.0000000\\
+genderGenderqueer, neither exclusively male nor female & 1.3638259 & 1.0773457 & 1.2659131 & 1032.92575 & 0.2058297\\
+genderMale & -0.3960150 & 0.1371885 & -2.8866495 & 435.38010 & 0.0040875\\
+genderOther (Please State) & 0.5014826 & 1.1705221 & 0.4284264 & 1033.82042 & 0.6684299\\
+\addlinespace
+genderTransgender Female (Male to Female: MTF) & 13.3989723 & 608.4891979 & 0.0220201 & 1035.89948 & 0.9824362\\
+genderTransgender Male (Female to Male; FTM) & 13.1656106 & 621.5790396 & 0.0211809 & 1035.89948 & 0.9831054\\
+\bottomrule
+\end{longtable}
+
+\section{Conclusion:}\label{conclusion}
+
+Based on the analysis, the proportion of people in the sample who
+supported legalisation is 0.59 using complete cases and 0.6 using
+imputed data. The logistic regression interpret the results from the
+logistic regression output.
+
+\section{Comparison of Regression
+Analyses}\label{comparison-of-regression-analyses}
+
+\includegraphics{Proportion_analysis_files/figure-latex/unnamed-chunk-10-1.pdf}
 
 \end{document}
