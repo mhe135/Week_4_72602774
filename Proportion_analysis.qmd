@@ -24,9 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r}
-# Load the necessary library from the Tidyverse
-
+```{r echo=FALSE}
 # Load the data from the CSV file
 referendum_raw <- read_csv("referendum_survey_lab_version.csv")
 ```
