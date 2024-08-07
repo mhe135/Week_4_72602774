@@ -1,0 +1,146 @@
+---
+title: "Proportion_analysis"
+author: "Miaobing"
+date: "2024-08-06"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r include=FALSE}
+library(kableExtra)
+library(knitr)
+library(broom)
+library(readr)
+library(ggplot2)
+library(mice)
+library(dplyr)
+library(tidyr)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# Load the necessary library from the Tidyverse
+
+# Load the data from the CSV file
+referendum_raw <- read_csv("referendum_survey_lab_version.csv")
+```
+```{r echo=FALSE, warning=FALSE}
+# Load necessary packages
+library(dplyr)
+library(tidyr)
+
+# Assuming referendum_raw is the data frame containing the dataset
+missing_values <- referendum_raw %>%
+  summarise(across(everything(), ~ sum(is.na(.))))
+
+# Display the table
+print(missing_values)
+
+```
+
+```{r echo=FALSE, warning=FALSE}
+# Load the dataset
+dataset <- referendum_raw
+
+# Step 1: Inspect and clean the data
+# Remove rows with missing age or gender
+dataset_cleaned <- na.omit(dataset[, c("age", "gender")])
+
+# Step 2: Create the visualization
+ggplot(dataset_cleaned, aes(x = age, fill = gender)) +
+  geom_density( mapping = NULL, data = NULL, stat = "density",position = "identity") +
+  facet_wrap(~gender) +
+  theme_minimal() +
+  labs(
+    title = "Age Distribution Across Genders",
+    x = "Age",
+    y = "Count",
+    fill = "Gender"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none")
+```
+```{r echo=FALSE}
+# Calculate the proportion of Yes voters from complete cases
+complete_cases <- referendum_raw %>%
+  drop_na()
+
+yes_proportion <- mean(complete_cases$referendum == 1)
+
+# Round the proportion to one decimal place
+rounded_yes_proportion <- round(yes_proportion, 1)
+rounded_yes_proportion
+```
+```{r echo=FALSE}
+# logistic Regression
+# Conduct a logistic regression model and assign result to ref_model
+complete_model <- glm(referendum ~ age + gender, data = complete_cases, family = binomial)
+# Show tidied results using the broom package
+complete_model_summary <- tidy(complete_model)
+
+# pipe the result into a clean table using kableExtra
+kable(complete_model_summary, caption = "Logistic Regression on Complete Cases") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+```
+# Imputed cases
+### 1. Conduct multiple imputation
+```{r echo=FALSE}
+# Run multiple imputation
+# use the `mice` package
+imputed_data <- mice(referendum_raw, m = 5, method = "pmm", seed = 500)
+```
+
+### 2. The proportion of yes voters
+```{r echo=FALSE}
+# Calculate the proportion of yes voters
+imputed_long <- complete(imputed_data, "long")
+imputed_yes_proportion <- round(mean(imputed_long$referendum == 1), 1)
+head(imputed_yes_proportion)
+
+```
+### 3. Logistic Regression Table for multiple imputation
+```{r echo=FALSE}
+# Fit the logistic regression model on each of the imputed datasets,
+# pool them, and show summary stats
+imputed_model <- with(imputed_data, glm(referendum ~ age + gender, family = binomial))
+pooled_results <- pool(imputed_model)
+summary_pooled <- summary(pooled_results)
+
+# using the kable
+kable(summary_pooled, caption = "Logistic Regression on Imputed Data") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+```
+
+# Conclusion:
+Based on the analysis, the proportion of people in the sample who supported legalisation is `r round(yes_proportion, 2)` using complete cases and `r round(imputed_yes_proportion, 2)` using imputed data. The logistic regression interpret the results from the logistic regression output.
+
+
+# Comparison of Regression Analyses
+```{r echo=FALSE}
+# Combine the results for comparison
+comparison_plot <- bind_rows(
+  complete_model_summary %>% mutate(Data = "Complete Cases"),
+  summary_pooled %>% mutate(Data = "Imputed Data")
+)
+
+# Create a dot-and-whisker plot
+comparison_plot %>%
+  ggplot(aes(x = term, y = estimate, color = Data, group = Data)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error),
+                width = 0.2) +
+  labs(title = "Comparison of Logistic Regression Results with Confidence Intervals",
+       x = "Term", y = "Estimate") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  coord_flip() # Flip coordinates for better readability
+
+```
