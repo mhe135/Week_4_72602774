@@ -2,7 +2,9 @@
 title: "Proportion_analysis"
 author: "Miaobing"
 date: "2024-08-06"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -81,7 +83,7 @@ proportion_yes_imputed
 # Convert gender to factor
 referendum_raw$gender <- as.factor(referendum_raw$gender)
 
-# Complete Case Analysis ---------------------------------------------------
+# Complete Case Analysis
 # Filter complete cases
 complete_cases <- referendum_raw %>% filter(!is.na(age), !is.na(gender), !is.na(referendum))
 
@@ -91,7 +93,7 @@ model_complete <- glm(referendum ~ age + gender, data = complete_cases, family =
 # Tidy results for complete cases and extract confidence intervals
 tidy_complete <- tidy(model_complete, conf.int = TRUE)
 
-# Multiple Imputation Analysis ---------------------------------------------
+# Multiple Imputation Analysis
 # Perform multiple imputation
 imputed_data <- mice(referendum_raw, m = 5, method = "pmm", seed = 123)
 
@@ -157,7 +159,6 @@ tidy_results %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 ```
-The percentage of votes in favour of completion of cases is around **0.6**. This indicates that **60%** of respondents cast "yes" ballots in the referendum. This percentage gives an idea of the general level of support for the referendum.
 
 ```{r echo=FALSE, include=FALSE, warning=FALSE}
 library(mice)
@@ -194,4 +195,4 @@ summary(pooled_models)
 ```
 
 # Conclusion:
-The analysis of the imputed dataset reveals that the proportion of 'yes' voters is approximately 0.61. The logistic regression results indicate that age is a significant predictor, with older individuals being less likely to vote 'yes'. Gender also plays a role, with males being significantly less likely to vote 'yes' compared to females. However, other gender identities did not show statistically significant differences. These insights provide a clearer understanding of voter behavior, highlighting the importance of considering demographic factors in referendum outcomes.
+The analysis of the imputed dataset reveals that the proportion of 'yes' voters is approximately 0.6. The logistic regression results indicate that age is a significant predictor, with older individuals being less likely to vote 'yes'. Gender also plays a role, with males being significantly less likely to vote 'yes' compared to females. However, other gender identities did not show statistically significant differences. These insights provide a clearer understanding of voter behavior, highlighting the importance of considering demographic factors in referendum outcomes.
