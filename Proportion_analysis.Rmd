@@ -160,7 +160,7 @@ tidy_results %>%
 The percentage of votes in favour of completion of cases is around **0.6**. This indicates that **60%** of respondents cast "yes" ballots in the referendum. This percentage gives an idea of the general level of support for the referendum.
 
 ```{r echo=FALSE, include=FALSE, warning=FALSE}
-
+library(mice)
 # Perform multiple imputation
 imputed_data <- mice(referendum_raw, m = 5, method = 'pmm', maxit = 50, seed = 500)
 
