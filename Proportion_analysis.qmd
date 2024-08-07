@@ -1,12 +1,8 @@
 ---
-title: "Proportion_analysis"
-author: "Miaobing"
-date: "2024-08-06"
-output:
-  pdf_document: default
-  html_document:
-    df_print: paged
+title: "Cannabis Referendum Analysis"
+output: pdf_documentd
 ---
+
 
 ```{r include=FALSE}
 library(kableExtra)
